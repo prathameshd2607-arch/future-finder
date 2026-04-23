@@ -1,24 +1,883 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PathFinder — Discover Your Path After 10th</title>
-    <meta name="description" content="Interactive career & stream planner for Class 10 students. Take the quiz, explore Science, Commerce, Arts & vocational paths." />
-    <meta name="author" content="PathFinder" />
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PathFinder — Post-10th Career & Stream Planner</title>
+<meta name="description" content="Comprehensive post-10th career and stream planner: take the quiz, explore Science (PCM/PCB), Commerce and Arts with exam patterns, syllabus, books, topper tips and state CETs." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --bg:#f6f7fb;
+    --surface:#ffffff;
+    --surface-2:#f1f3fa;
+    --text:#0f172a;
+    --muted:#5b6478;
+    --border:#e6e8f0;
+    --primary:#4f46e5;
+    --primary-2:#7c3aed;
+    --primary-soft:#eef2ff;
+    --accent:#06b6d4;
+    --success:#10b981;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --shadow: 0 10px 30px -12px rgba(31,41,90,.18);
+    --shadow-lg: 0 25px 60px -20px rgba(31,41,90,.28);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --grad: linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#06b6d4 100%);
+  }
+  [data-theme="dark"]{
+    --bg:#0a0d1a;
+    --surface:#10142a;
+    --surface-2:#161a36;
+    --text:#eef0ff;
+    --muted:#9aa3c7;
+    --border:#222848;
+    --primary:#8b85ff;
+    --primary-2:#c084fc;
+    --primary-soft:#1a1f44;
+    --accent:#22d3ee;
+    --shadow: 0 10px 30px -12px rgba(0,0,0,.55);
+    --shadow-lg: 0 25px 60px -20px rgba(124,58,237,.35);
+    --grad: linear-gradient(135deg,#8b85ff 0%,#c084fc 50%,#22d3ee 100%);
+  }
 
-    <meta property="og:title" content="PathFinder — Career Planner After 10th" />
-    <meta property="og:description" content="Quiz, roadmaps, top colleges & careers — all in one place." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Plus Jakarta Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    transition: background .35s ease, color .35s ease;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk','Plus Jakarta Sans',sans-serif; line-height:1.2; margin:0 0 .5em}
+  a{color:inherit; text-decoration:none}
+  img{max-width:100%}
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+  .container{max-width:1180px; margin:0 auto; padding:0 22px}
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  /* Navbar */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter: saturate(160%) blur(14px);
+    background:color-mix(in oklab, var(--surface) 78%, transparent);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; height:68px}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.15rem}
+  .logo-mark{
+    width:34px;height:34px;border-radius:10px;
+    background:var(--grad);
+    display:grid;place-items:center;color:#fff;
+    box-shadow:0 6px 18px -6px var(--primary);
+  }
+  .nav-links{display:flex; gap:6px; align-items:center}
+  .nav-links a{
+    padding:9px 14px; border-radius:10px; font-weight:600; font-size:.95rem; color:var(--muted);
+    transition:.2s;
+  }
+  .nav-links a:hover{color:var(--text); background:var(--surface-2)}
+  .nav-links a.active{color:var(--text); background:var(--primary-soft)}
+  .theme-toggle{
+    width:40px;height:40px;border-radius:10px;border:1px solid var(--border);
+    background:var(--surface); color:var(--text); cursor:pointer; display:grid;place-items:center;
+    transition:.2s; margin-left:8px;
+  }
+  .theme-toggle:hover{transform:translateY(-1px); box-shadow:var(--shadow)}
+  .menu-btn{display:none; background:none;border:1px solid var(--border); color:var(--text);
+    width:40px;height:40px;border-radius:10px;cursor:pointer}
+
+  /* Buttons */
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:13px 22px; border-radius:12px; border:0; cursor:pointer;
+    font-weight:700; font-size:.98rem; font-family:inherit;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .btn-primary{
+    background:var(--grad); color:#fff;
+    box-shadow:0 12px 28px -10px var(--primary);
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 18px 36px -10px var(--primary)}
+  .btn-ghost{background:var(--surface); color:var(--text); border:1px solid var(--border)}
+  .btn-ghost:hover{background:var(--surface-2)}
+  .btn-sm{padding:9px 14px; font-size:.88rem; border-radius:10px}
+
+  /* Sections */
+  section.view{display:none; animation:fade .35s ease both}
+  section.view.active{display:block}
+  @keyframes fade{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+  /* Hero */
+  .hero{padding:70px 0 50px; position:relative; overflow:hidden}
+  .hero::before{
+    content:""; position:absolute; inset:-20% -10% auto auto; width:520px; height:520px;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--primary) 35%, transparent), transparent 70%);
+    filter: blur(10px); z-index:0; pointer-events:none;
+  }
+  .hero::after{
+    content:""; position:absolute; inset:auto auto -30% -10%; width:520px; height:520px;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--accent) 30%, transparent), transparent 70%);
+    filter: blur(10px); z-index:0; pointer-events:none;
+  }
+  .hero-inner{position:relative; z-index:1; text-align:center; max-width:820px; margin:0 auto}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:7px 14px; border-radius:999px; background:var(--primary-soft); color:var(--primary);
+    font-weight:700; font-size:.82rem; letter-spacing:.3px;
+  }
+  .hero h1{font-size: clamp(2.1rem, 4.6vw, 3.6rem); margin-top:18px}
+  .hero h1 .grad{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .hero p{color:var(--muted); font-size:1.08rem; max-width:640px; margin: 14px auto 28px}
+  .hero-cta{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+
+  /* Feature grid */
+  .features{padding:30px 0 70px}
+  .grid{display:grid; gap:20px}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:22px; transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+  }
+  .card:hover{transform:translateY(-4px); box-shadow:var(--shadow-lg); border-color:transparent}
+  .feat-icon{
+    width:46px;height:46px;border-radius:12px; display:grid;place-items:center;
+    background:var(--primary-soft); color:var(--primary); font-size:1.15rem; margin-bottom:14px;
+  }
+  .feat h3{font-size:1.1rem; margin-bottom:6px}
+  .feat p{margin:0; color:var(--muted); font-size:.95rem}
+
+  /* Section heading */
+  .section-head{text-align:center; max-width:680px; margin:0 auto 36px}
+  .section-head h2{font-size: clamp(1.6rem, 3vw, 2.2rem)}
+  .section-head p{color:var(--muted); margin:8px 0 0}
+
+  /* Streams */
+  .streams-wrap{padding:60px 0}
+  .stream-card{
+    cursor:pointer; position:relative; overflow:hidden;
+  }
+  .stream-card .emoji{font-size:2rem}
+  .stream-card .tag{
+    display:inline-block; margin-top:8px; padding:4px 10px; border-radius:999px;
+    background:var(--surface-2); color:var(--muted); font-size:.78rem; font-weight:600;
+  }
+  .stream-card .accent-bar{
+    position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--grad);
+  }
+
+  /* Stream detail */
+  .detail-head{display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:22px}
+  .detail-head .title{display:flex; gap:14px; align-items:center}
+  .detail-head .title .em{font-size:2.2rem}
+  .pill-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .pill{padding:6px 12px; border-radius:999px; background:var(--primary-soft); color:var(--primary); font-size:.8rem; font-weight:700}
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:24px; margin-bottom:20px; box-shadow:var(--shadow);
+  }
+  .panel h3{display:flex; align-items:center; gap:10px; font-size:1.15rem; margin-bottom:14px}
+  .panel h3 i{color:var(--primary)}
+
+  /* Timeline */
+  .timeline{position:relative; padding-left:28px}
+  .timeline::before{content:""; position:absolute; left:10px; top:6px; bottom:6px; width:2px; background:var(--border)}
+  .tl-item{position:relative; padding:6px 0 18px}
+  .tl-item::before{
+    content:""; position:absolute; left:-23px; top:10px; width:14px;height:14px;border-radius:50%;
+    background:var(--grad); box-shadow:0 0 0 4px var(--surface), 0 0 0 5px var(--border);
+  }
+  .tl-stage{font-weight:700}
+  .tl-desc{color:var(--muted); font-size:.94rem}
+
+  /* Tables */
+  .table-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:12px}
+  table{width:100%; border-collapse:collapse; min-width:560px}
+  th,td{text-align:left; padding:12px 14px; border-bottom:1px solid var(--border); font-size:.94rem}
+  th{background:var(--surface-2); font-weight:700; color:var(--text)}
+  tr:last-child td{border-bottom:0}
+
+  .exam-card{
+    border:1px solid var(--border); border-radius:14px; padding:18px; background:var(--surface);
+    margin-bottom:14px;
+  }
+  .exam-card h4{margin:0 0 6px; font-size:1.05rem}
+  .exam-meta{display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 12px}
+  .meta-chip{font-size:.78rem; background:var(--surface-2); color:var(--muted); padding:4px 10px; border-radius:999px; font-weight:600}
+  .exam-grid{display:grid; gap:14px; grid-template-columns:1fr 1fr}
+  .exam-block h5{margin:0 0 6px; font-size:.85rem; text-transform:uppercase; letter-spacing:.5px; color:var(--muted)}
+  .exam-block ul{margin:0; padding-left:18px}
+  .exam-block li{margin-bottom:4px; font-size:.92rem}
+
+  .video-wrap{position:relative; padding-top:56.25%; border-radius:14px; overflow:hidden; border:1px solid var(--border)}
+  .video-wrap iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+
+  /* Quiz */
+  .quiz-wrap{max-width:720px; margin:0 auto}
+  .progress{height:8px; background:var(--surface-2); border-radius:999px; overflow:hidden; margin-bottom:18px}
+  .progress > span{display:block; height:100%; background:var(--grad); width:0; transition: width .35s ease}
+  .quiz-card{padding:28px}
+  .qnum{color:var(--muted); font-weight:700; font-size:.85rem; letter-spacing:.5px}
+  .qtext{font-size:1.3rem; font-weight:700; margin:8px 0 18px}
+  .options{display:grid; gap:10px}
+  .option{
+    padding:14px 16px; border:1px solid var(--border); border-radius:12px; background:var(--surface);
+    cursor:pointer; font-weight:600; transition:.18s;
+    display:flex; align-items:center; gap:12px;
+  }
+  .option:hover{border-color:var(--primary); transform:translateX(2px)}
+  .option .dot{width:18px;height:18px;border-radius:50%; border:2px solid var(--border); flex-shrink:0}
+  .option.selected{border-color:var(--primary); background:var(--primary-soft)}
+  .option.selected .dot{border-color:var(--primary); background:var(--primary)}
+  .quiz-actions{display:flex; justify-content:space-between; margin-top:20px}
+
+  .result{text-align:center; padding:36px 24px}
+  .result .em{font-size:3rem}
+  .result h2{margin-top:8px; font-size:2rem}
+  .result .stream-name{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
+
+  /* Footer */
+  footer{padding:40px 0; text-align:center; color:var(--muted); border-top:1px solid var(--border); margin-top:60px}
+
+  /* Responsive */
+  @media (max-width: 900px){
+    .grid-4{grid-template-columns:repeat(2,1fr)}
+    .grid-3{grid-template-columns:repeat(2,1fr)}
+    .exam-grid{grid-template-columns:1fr}
+  }
+  @media (max-width: 640px){
+    .nav-links{display:none; position:absolute; top:68px; left:0; right:0; flex-direction:column; padding:14px; background:var(--surface); border-bottom:1px solid var(--border)}
+    .nav-links.open{display:flex}
+    .nav-links a{width:100%}
+    .menu-btn{display:grid; place-items:center}
+    .grid-4,.grid-3,.grid-2{grid-template-columns:1fr}
+    .hero{padding:48px 0 30px}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="logo" data-nav="home">
+      <span class="logo-mark"><i class="fa-solid fa-compass"></i></span>
+      PathFinder
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#" data-nav="home" class="active">Home</a>
+      <a href="#" data-nav="quiz">Take Quiz</a>
+      <a href="#" data-nav="streams">Explore Streams</a>
+    </nav>
+    <div style="display:flex; align-items:center">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="container hero-inner">
+        <span class="eyebrow"><i class="fa-solid fa-sparkles"></i> Your post-10th launchpad</span>
+        <h1>Discover Your Perfect Path <span class="grad">After 10th</span></h1>
+        <p>Take a smart 5-question quiz, explore every stream in depth — exam patterns, syllabus, books, topper techniques and all major State CETs in one place.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" data-nav="quiz"><i class="fa-solid fa-rocket"></i> Start Career Quiz</button>
+          <button class="btn btn-ghost" data-nav="streams"><i class="fa-solid fa-compass"></i> Explore Streams</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="features container">
+      <div class="section-head">
+        <h2>Everything you need to choose right</h2>
+        <p>Backed by structured data on streams, exams and study strategies — no fluff.</p>
+      </div>
+      <div class="grid grid-4">
+        <div class="card feat"><div class="feat-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div><h3>Interest Quiz</h3><p>Quick personality + interest match.</p></div>
+        <div class="card feat"><div class="feat-icon"><i class="fa-solid fa-route"></i></div><h3>Visual Roadmaps</h3><p>11th → Undergrad → Career timeline.</p></div>
+        <div class="card feat"><div class="feat-icon"><i class="fa-solid fa-clipboard-list"></i></div><h3>Exam Deep-Dive</h3><p>Pattern, syllabus, books, tips.</p></div>
+        <div class="card feat"><div class="feat-icon"><i class="fa-solid fa-map-location-dot"></i></div><h3>All State CETs</h3><p>MHT-CET, KCET, EAMCET & more.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="view" id="view-quiz">
+    <div class="container" style="padding:50px 0">
+      <div class="section-head">
+        <h2>The Career Quiz</h2>
+        <p>5 quick questions. We'll suggest the stream that fits you best.</p>
+      </div>
+      <div class="quiz-wrap">
+        <div class="progress"><span id="quizProgress"></span></div>
+        <div class="card quiz-card" id="quizCard"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STREAMS LIST -->
+  <section class="view" id="view-streams">
+    <div class="container streams-wrap">
+      <div class="section-head">
+        <h2>Explore the Streams</h2>
+        <p>Tap any stream for the full breakdown — overview, roadmap, exams (with state CETs), books, topper techniques and motivation.</p>
+      </div>
+      <div class="grid grid-2" id="streamsGrid"></div>
+    </div>
+  </section>
+
+  <!-- STREAM DETAIL -->
+  <section class="view" id="view-detail">
+    <div class="container" style="padding:40px 0">
+      <button class="btn btn-ghost btn-sm" id="backToStreams" style="margin-bottom:18px"><i class="fa-solid fa-arrow-left"></i> Back to Streams</button>
+      <div id="detailContent"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">© <span id="year"></span> PathFinder — Built for India's curious 10th graders.</div>
+</footer>
+
+<script>
+/* =========================
+   MOCK DATA
+========================= */
+const mockData = {
+  streams: {
+    pcm: {
+      id:"pcm",
+      name:"Science (PCM)",
+      emoji:"⚛️",
+      tagline:"Engineering, Tech, AI & Architecture",
+      description:"Physics, Chemistry & Mathematics — the gateway to engineering, computer science, data, design-tech and pure sciences. You'll think in equations, build in code, and solve real-world problems.",
+      roadmap:[
+        {stage:"Class 11–12 (PCM)", desc:"Master NCERT + start JEE / coding prep alongside boards."},
+        {stage:"Entrance Exams", desc:"JEE Main/Advanced, BITSAT, CUET, and your State CET."},
+        {stage:"Undergraduate (4 yrs)", desc:"B.Tech / B.E. / B.Arch / B.Sc — pick a specialization."},
+        {stage:"Master's or Job", desc:"M.Tech, MS abroad, MBA, or join product/tech companies."},
+        {stage:"Career", desc:"Software Engineer, Data Scientist, Architect, Researcher."}
+      ],
+      exams:[
+        {
+          name:"JEE Main",
+          authority:"NTA",
+          pattern:{duration:"3 hours", totalMarks:"300", questions:"90 (75 attempted)", marking:"+4 correct, −1 incorrect (MCQ); 0 negative for numerical"},
+          syllabus:["Physics: Mechanics, Electrodynamics, Modern Physics","Chemistry: Physical, Organic, Inorganic","Mathematics: Calculus, Algebra, Coordinate Geometry, Vectors"],
+          books:["NCERT Physics, Chemistry, Maths (Class 11 & 12)","HC Verma — Concepts of Physics","DC Pandey — Understanding Physics series","NV Bhagwan / OP Tandon — Physical Chemistry","RD Sharma & Cengage — Mathematics"],
+          tips:["Active recall: re-derive formulas without notes","Spaced repetition for organic reactions","Weekly full-length mock + error log","Revise NCERT lines 3× before exam"]
+        },
+        {
+          name:"JEE Advanced",
+          authority:"IITs",
+          pattern:{duration:"3 + 3 hours (2 papers)", totalMarks:"~360", questions:"Mixed MCQ, MSQ, Numerical", marking:"Variable (+3/+4 correct, partial & negative marking)"},
+          syllabus:["Higher-order Physics, Chemistry, Maths","Heavy focus on application & multi-concept problems"],
+          books:["IE Irodov — Problems in General Physics","Resnick Halliday — Physics","JD Lee — Inorganic Chemistry","MS Chauhan — Organic Chemistry","Cengage Maths series"],
+          tips:["Solve previous 20 years' papers — pattern repeats","Master 1 tough topic per week","Time-bound problem solving (45-min sets)","Analyze every mock, don't just attempt"]
+        },
+        {
+          name:"BITSAT",
+          authority:"BITS Pilani",
+          pattern:{duration:"3 hours", totalMarks:"390", questions:"130 + 12 bonus", marking:"+3 correct, −1 incorrect"},
+          syllabus:["PCM (NCERT level) + English Proficiency + Logical Reasoning"],
+          books:["NCERT (mandatory)","Arihant BITSAT guide","Previous year BITSAT papers"],
+          tips:["Speed > depth — accuracy with pace wins","Attempt bonus questions only if time left","Practice English & LR daily — easy scoring"]
+        },
+        {
+          name:"CUET (UG)",
+          authority:"NTA",
+          pattern:{duration:"~2 hours/section", totalMarks:"Varies", questions:"50 per subject", marking:"+5 correct, −1 incorrect"},
+          syllabus:["Class 12 NCERT for chosen subjects + General Test"],
+          books:["NCERT Class 12 (all subjects)","Arihant CUET section guides"],
+          tips:["Stick to NCERT line-by-line","General Test: practice current affairs daily","Pick subjects you score highest in"]
+        }
+      ],
+      stateCETs:[
+        {name:"MHT-CET", state:"Maharashtra", subjects:"PCM", marking:"+1, no negative"},
+        {name:"KCET", state:"Karnataka", subjects:"PCM", marking:"+1, no negative"},
+        {name:"AP/TS EAMCET (EAPCET)", state:"Andhra/Telangana", subjects:"PCM", marking:"+1, no negative"},
+        {name:"WBJEE", state:"West Bengal", subjects:"PCM", marking:"Cat-1 +1, Cat-2 +2, negative marking"},
+        {name:"TNEA", state:"Tamil Nadu", subjects:"Based on Class 12 marks", marking:"No exam (counselling)"},
+        {name:"KEAM", state:"Kerala", subjects:"PCM", marking:"+4, −1"},
+        {name:"UPSEE / JEECUP", state:"Uttar Pradesh", subjects:"PCM (B.Tech via JEE Main)", marking:"+1 (JEECUP)"},
+        {name:"COMEDK UGET", state:"Karnataka (Private)", subjects:"PCM + English", marking:"+1, no negative"},
+        {name:"GUJCET", state:"Gujarat", subjects:"PCM", marking:"+1, −0.25"},
+        {name:"OJEE", state:"Odisha", subjects:"PCM", marking:"+4, −1"},
+        {name:"AP POLYCET / TS POLYCET", state:"Andhra/Telangana", subjects:"Polytechnic", marking:"+1"},
+        {name:"HPCET", state:"Himachal Pradesh", subjects:"PCM", marking:"+1, no negative"},
+        {name:"PUCET", state:"Punjab/Chandigarh", subjects:"PCM", marking:"+1, −0.25"},
+        {name:"AEEE", state:"Amrita (Pan-India)", subjects:"PCM", marking:"+3, −1"}
+      ],
+      motivationVideo:"https://www.youtube.com/embed/p3F1jL2hDvI"
+    },
+
+    pcb: {
+      id:"pcb",
+      name:"Science (PCB)",
+      emoji:"🧬",
+      tagline:"Medicine, Biotech & Life Sciences",
+      description:"Physics, Chemistry & Biology — your path to becoming a doctor, dentist, pharmacist, biotech researcher or psychologist. Patience, precision and empathy go a long way here.",
+      roadmap:[
+        {stage:"Class 11–12 (PCB)", desc:"Deep NCERT + NEET prep alongside boards."},
+        {stage:"Entrance Exams", desc:"NEET-UG, AIIMS (via NEET), CUET, State CETs."},
+        {stage:"Undergraduate (4–5.5 yrs)", desc:"MBBS, BDS, BAMS, B.Pharm, B.Sc Nursing, BPT."},
+        {stage:"PG / Specialization", desc:"MD/MS, MDS, M.Pharm, super-specialty."},
+        {stage:"Career", desc:"Doctor, Surgeon, Researcher, Pharmacist, Psychologist."}
+      ],
+      exams:[
+        {
+          name:"NEET-UG",
+          authority:"NTA",
+          pattern:{duration:"3 hours 20 min", totalMarks:"720", questions:"200 (180 to attempt)", marking:"+4 correct, −1 incorrect"},
+          syllabus:["Physics: Mechanics, Optics, Modern Physics","Chemistry: Physical, Organic, Inorganic","Biology: Botany + Zoology (NCERT-heavy)"],
+          books:["NCERT Biology Class 11 & 12 (most important)","Trueman's Elementary Biology","HC Verma + DC Pandey for Physics","NCERT Chemistry + MS Chauhan (Organic)"],
+          tips:["NCERT Biology = 95% of Bio questions","Diagrams: draw + label weekly","Mock test every Sunday + error journal","Spaced revision of Inorganic Chem tables"]
+        },
+        {
+          name:"AIIMS / JIPMER (now via NEET)",
+          authority:"NTA",
+          pattern:{duration:"Same as NEET", totalMarks:"720", questions:"200", marking:"+4, −1"},
+          syllabus:["Same as NEET-UG"],
+          books:["NCERT + MTG NEET guides","Previous AIIMS PYQs (still useful)"],
+          tips:["Focus on conceptual MCQs","Practice assertion–reason questions","Track all-India mock rank weekly"]
+        },
+        {
+          name:"CUET (UG) — for B.Sc",
+          authority:"NTA",
+          pattern:{duration:"~2 hr/section", totalMarks:"Varies", questions:"50/subject", marking:"+5, −1"},
+          syllabus:["Class 12 NCERT subjects + General Test"],
+          books:["NCERT (Bio, Chem, Phy)","Arihant CUET guide"],
+          tips:["Pick subjects strategically","NCERT line-by-line","Practice General Test daily"]
+        }
+      ],
+      stateCETs:[
+        {name:"KEAM (Medical)", state:"Kerala", subjects:"PCB", marking:"+4, −1"},
+        {name:"AP/TS EAMCET (Agri & Medical)", state:"Andhra/Telangana", subjects:"PCB", marking:"+1"},
+        {name:"MHT-CET (PCB)", state:"Maharashtra", subjects:"PCB (for Pharmacy/Agri)", marking:"+1, no negative"},
+        {name:"WB JEE Pharmacy", state:"West Bengal", subjects:"PCB", marking:"+1/+2, negative"},
+        {name:"GUJCET (Bio)", state:"Gujarat", subjects:"PCB", marking:"+1, −0.25"},
+        {name:"AIAPGET / State BAMS-BHMS", state:"Pan-India / States", subjects:"Via NEET", marking:"As NEET"},
+        {name:"AP/TS POLYCET (Pharmacy Diploma)", state:"AP/Telangana", subjects:"Bio/General", marking:"+1"},
+        {name:"COMEDK (Allied Health)", state:"Karnataka (Private)", subjects:"PCB", marking:"+1"}
+      ],
+      motivationVideo:"https://www.youtube.com/embed/ZXsQAXx_ao0"
+    },
+
+    commerce: {
+      id:"commerce",
+      name:"Commerce",
+      emoji:"📈",
+      tagline:"Business, Finance & Entrepreneurship",
+      description:"Accounts, Business Studies & Economics — your launchpad for CA, CFA, MBA, banking, fintech and startups. Sharp number sense + people skills = unstoppable.",
+      roadmap:[
+        {stage:"Class 11–12 (Commerce)", desc:"Build accounts + economics base. Start CA Foundation if curious."},
+        {stage:"Entrance Exams", desc:"CUET, IPMAT, CA Foundation, NPAT, CLAT (for Law)."},
+        {stage:"Undergraduate (3–5 yrs)", desc:"B.Com, BBA, BMS, Eco Hons, Integrated MBA."},
+        {stage:"PG / Pro Course", desc:"MBA, CA, CFA, ACCA, M.Com."},
+        {stage:"Career", desc:"CA, Investment Banker, Analyst, Entrepreneur, Consultant."}
+      ],
+      exams:[
+        {
+          name:"CA Foundation",
+          authority:"ICAI",
+          pattern:{duration:"3 hours/paper × 4 papers", totalMarks:"400", questions:"Mix of subjective + objective", marking:"+1 in MCQ papers, −0.25 negative; 40% per paper, 50% aggregate to pass"},
+          syllabus:["Principles & Practice of Accounting","Business Laws & BCR","Business Mathematics, LR & Statistics","Business Economics & BCK"],
+          books:["ICAI Study Material (mandatory)","Tulsian — Accountancy","PC Tulsian — Business Laws","Sanjay Aggarwal — Maths & Stats"],
+          tips:["ICAI material > everything else","Solve full mock papers in 3-hr slots","Make formula sheets for Maths/Stats","Revise law sections by writing key words"]
+        },
+        {
+          name:"CUET (UG)",
+          authority:"NTA",
+          pattern:{duration:"~2 hr/section", totalMarks:"Varies", questions:"50/subject", marking:"+5 correct, −1 incorrect"},
+          syllabus:["Accountancy, Business Studies, Economics, English, General Test"],
+          books:["NCERT Class 12 (all commerce subjects)","Arihant CUET Commerce guide","TS Grewal — Accounts"],
+          tips:["NCERT line-by-line is the cheat code","Practice 3 sections daily","Solve last 2 years' CUET papers"]
+        },
+        {
+          name:"IPMAT (IIM Indore/Rohtak)",
+          authority:"IIMs",
+          pattern:{duration:"2 hours", totalMarks:"360", questions:"60 (QA + VARC)", marking:"+4 correct, −1 incorrect (MCQ); 0 negative for short answer"},
+          syllabus:["Quantitative Ability (Class 9–12 Maths)","Verbal Ability & Reading Comprehension"],
+          books:["Arun Sharma — QA for CAT","Word Power Made Easy — Norman Lewis","Previous IPMAT papers"],
+          tips:["Daily 5 QA + 1 RC passage","Maintain a vocabulary diary","Time the short-answer section strictly"]
+        },
+        {
+          name:"NPAT (NMIMS)",
+          authority:"NMIMS",
+          pattern:{duration:"100 min", totalMarks:"120", questions:"120", marking:"+1 correct, no negative"},
+          syllabus:["Quant & Numerical Ability","Reasoning & General Intelligence","Language & English Proficiency"],
+          books:["RS Aggarwal — Quant & Reasoning","Word Power Made Easy"],
+          tips:["No negative — attempt ALL","Speed practice daily","Mock every 3 days"]
+        }
+      ],
+      stateCETs:[
+        {name:"MAH BBA/BBM CET", state:"Maharashtra", subjects:"Logical, Verbal, Quant, GK", marking:"+1, no negative"},
+        {name:"KCET (Commerce/B.Com routes)", state:"Karnataka", subjects:"As per course", marking:"+1"},
+        {name:"AP ICET", state:"Andhra Pradesh", subjects:"Analytical, Math, Communication (PG)", marking:"+1"},
+        {name:"TS ICET", state:"Telangana", subjects:"Same as APICET (PG MBA/MCA)", marking:"+1"},
+        {name:"DU JAT (legacy) / now CUET", state:"Delhi", subjects:"BMS/BBA via CUET", marking:"As CUET"},
+        {name:"SET (Symbiosis)", state:"Pan-India (Private)", subjects:"GE, Quant, Reasoning, English", marking:"+1, no negative"},
+        {name:"Christ University Entrance", state:"Karnataka (Private)", subjects:"English, Quant, GK, Reasoning", marking:"+1"}
+      ],
+      motivationVideo:"https://www.youtube.com/embed/arj7oStGLkU"
+    },
+
+    arts: {
+      id:"arts",
+      name:"Arts / Humanities",
+      emoji:"🎨",
+      tagline:"Law, Design, Media, Psychology & Civil Services",
+      description:"History, Political Science, Psychology, Sociology, Literature — the path to becoming a lawyer, designer, journalist, IAS officer, psychologist or storyteller. Read deep, think sharp.",
+      roadmap:[
+        {stage:"Class 11–12 (Humanities)", desc:"Read widely. Start CLAT / NID / NIFT / UPSC base early."},
+        {stage:"Entrance Exams", desc:"CUET, CLAT, NID DAT, NIFT, JMI Mass Comm."},
+        {stage:"Undergraduate (3–5 yrs)", desc:"BA Hons, BA LLB, B.Des, BJMC, BFA, Psychology Hons."},
+        {stage:"PG / Specialization", desc:"MA, LLM, M.Des, MBA, UPSC prep."},
+        {stage:"Career", desc:"Lawyer, Designer, Journalist, Psychologist, Civil Servant."}
+      ],
+      exams:[
+        {
+          name:"CLAT (UG)",
+          authority:"Consortium of NLUs",
+          pattern:{duration:"2 hours", totalMarks:"120", questions:"120 MCQs", marking:"+1 correct, −0.25 incorrect"},
+          syllabus:["English","Current Affairs incl. GK","Legal Reasoning","Logical Reasoning","Quantitative Techniques (Class 10 level)"],
+          books:["Universal's CLAT Guide","Word Power Made Easy — Norman Lewis","RS Aggarwal — Quant","Pearson Legal Reasoning"],
+          tips:["Read The Hindu / Indian Express daily","Practice passage-based legal reasoning","Mock test weekly from month 3","Maintain a current-affairs notebook"]
+        },
+        {
+          name:"CUET (UG)",
+          authority:"NTA",
+          pattern:{duration:"~2 hr/section", totalMarks:"Varies", questions:"50/subject", marking:"+5 correct, −1 incorrect"},
+          syllabus:["Class 12 NCERT for chosen humanities subjects + General Test"],
+          books:["NCERT Class 12 (Pol Sci, History, Psych, Eco)","Arihant CUET Humanities guide"],
+          tips:["NCERT cover-to-cover","Pick high-scoring subjects","Daily current affairs for General Test"]
+        },
+        {
+          name:"NID DAT (Prelims + Mains)",
+          authority:"NID",
+          pattern:{duration:"3 hours (Prelims) + Studio test (Mains)", totalMarks:"100 (Prelims)", questions:"Objective + Subjective sketch/design", marking:"Subjective evaluation; no fixed negative"},
+          syllabus:["Visualization, Drawing","Design awareness","Material & environment sensitivity","Creative problem solving"],
+          books:["NID DAT — Arihant guide","Design Drawing — Francis Ching","Daily sketchbook practice"],
+          tips:["Sketch 1 hour daily — observation drawings","Build a design portfolio early","Solve previous DAT papers","Visit design exhibitions / follow designers"]
+        },
+        {
+          name:"NIFT Entrance",
+          authority:"NIFT",
+          pattern:{duration:"CAT 2 hr + GAT 2 hr (+ Situation Test for B.Des)", totalMarks:"Varies", questions:"CAT: creative; GAT: 100 MCQs", marking:"GAT: +1, no negative"},
+          syllabus:["GAT: Quant, English, GK, Analytical, Comm Ability","CAT: Creative & observation skills"],
+          books:["NIFT — Arihant guide","Sketchbook & color theory basics"],
+          tips:["GAT: speed + accuracy","CAT: practice innovative compositions","Material handling for Situation Test"]
+        }
+      ],
+      stateCETs:[
+        {name:"MAH LLB 5-yr CET", state:"Maharashtra", subjects:"Legal Apt, Logical, Eng, GK, Math", marking:"+1, no negative"},
+        {name:"AILET", state:"NLU Delhi (National)", subjects:"English, GK, Legal & Logical Reasoning", marking:"+1, −0.25"},
+        {name:"LSAT India", state:"Pan-India (Private Law)", subjects:"Analytical, Logical, Reading", marking:"+1, no negative"},
+        {name:"DU LLB / TS LAWCET / AP LAWCET", state:"Delhi / Telangana / AP", subjects:"GK, Legal, Aptitude", marking:"+1, varies"},
+        {name:"BHU UET (Humanities)", state:"UP (now via CUET)", subjects:"Subject-based", marking:"As CUET"},
+        {name:"JMI Mass Communication Entrance", state:"Delhi", subjects:"Aptitude, GK, Writing", marking:"+1"},
+        {name:"Pearl Academy Entrance", state:"Pan-India (Private)", subjects:"Aptitude + portfolio", marking:"Subjective"},
+        {name:"Symbiosis SLAT (Law)", state:"Pan-India (Private)", subjects:"Logical, Legal, Analytical, English, GK", marking:"+1, no negative"},
+        {name:"Christ University Entrance (BA/Law)", state:"Karnataka (Private)", subjects:"English, GK, Reasoning", marking:"+1"}
+      ],
+      motivationVideo:"https://www.youtube.com/embed/tGdsOXZpyWE"
+    }
+  },
+
+  quiz:[
+    {
+      q:"Which subject genuinely excites you the most?",
+      options:[
+        {text:"Math, physics & solving puzzles", stream:"pcm"},
+        {text:"Biology, the human body & nature", stream:"pcb"},
+        {text:"Money, markets & business stories", stream:"commerce"},
+        {text:"History, books & social issues", stream:"arts"}
+      ]
+    },
+    {
+      q:"Pick your dream weekend project:",
+      options:[
+        {text:"Build a robot or code an app", stream:"pcm"},
+        {text:"Volunteer at a hospital or lab", stream:"pcb"},
+        {text:"Run a small online business", stream:"commerce"},
+        {text:"Write a story, design a poster or shoot a reel", stream:"arts"}
+      ]
+    },
+    {
+      q:"How do you handle a tough problem?",
+      options:[
+        {text:"Break it into logical steps & calculate", stream:"pcm"},
+        {text:"Research deeply & test theories", stream:"pcb"},
+        {text:"Strategize, talk to people & negotiate", stream:"commerce"},
+        {text:"Use creativity & a fresh perspective", stream:"arts"}
+      ]
+    },
+    {
+      q:"Your dream future workspace?",
+      options:[
+        {text:"A high-tech lab or startup garage", stream:"pcm"},
+        {text:"A hospital, clinic or research center", stream:"pcb"},
+        {text:"A corporate office or trading floor", stream:"commerce"},
+        {text:"A studio, courtroom or newsroom", stream:"arts"}
+      ]
+    },
+    {
+      q:"What motivates you the most?",
+      options:[
+        {text:"Inventing something the world needs", stream:"pcm"},
+        {text:"Helping & healing people", stream:"pcb"},
+        {text:"Building wealth & independence", stream:"commerce"},
+        {text:"Expressing ideas & changing minds", stream:"arts"}
+      ]
+    }
+  ]
+};
+
+/* =========================
+   ROUTING (SPA)
+========================= */
+const views = ['home','quiz','streams','detail'];
+function go(view, opts={}){
+  views.forEach(v=>{
+    document.getElementById('view-'+v).classList.toggle('active', v===view);
+  });
+  document.querySelectorAll('.nav-links a').forEach(a=>{
+    a.classList.toggle('active', a.dataset.nav===view);
+  });
+  document.getElementById('navLinks').classList.remove('open');
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(view==='quiz') renderQuiz();
+  if(view==='streams') renderStreamsList();
+  if(view==='detail' && opts.streamId) renderDetail(opts.streamId);
+}
+document.addEventListener('click', e=>{
+  const t = e.target.closest('[data-nav]');
+  if(t){ e.preventDefault(); go(t.dataset.nav); }
+});
+
+/* =========================
+   THEME
+========================= */
+const themeBtn = document.getElementById('themeToggle');
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  themeBtn.innerHTML = t==='dark'
+    ? '<i class="fa-solid fa-sun"></i>'
+    : '<i class="fa-solid fa-moon"></i>';
+  localStorage.setItem('pf-theme', t);
+}
+themeBtn.addEventListener('click', ()=>{
+  const cur = document.documentElement.getAttribute('data-theme')||'light';
+  applyTheme(cur==='dark'?'light':'dark');
+});
+applyTheme(localStorage.getItem('pf-theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+
+/* Mobile menu */
+document.getElementById('menuBtn').addEventListener('click', ()=>{
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+/* =========================
+   STREAMS LIST
+========================= */
+function renderStreamsList(){
+  const el = document.getElementById('streamsGrid');
+  el.innerHTML = Object.values(mockData.streams).map(s=>`
+    <div class="card stream-card" data-stream="${s.id}">
+      <span class="accent-bar"></span>
+      <div class="emoji">${s.emoji}</div>
+      <h3 style="margin-top:8px">${s.name}</h3>
+      <p style="color:var(--muted); margin:4px 0 6px">${s.tagline}</p>
+      <span class="tag"><i class="fa-solid fa-arrow-right"></i> Open deep-dive</span>
+    </div>
+  `).join('');
+  el.querySelectorAll('.stream-card').forEach(c=>{
+    c.addEventListener('click', ()=> go('detail', {streamId:c.dataset.stream}));
+  });
+}
+
+/* =========================
+   STREAM DETAIL
+========================= */
+function renderDetail(id){
+  const s = mockData.streams[id];
+  if(!s) return;
+  const el = document.getElementById('detailContent');
+  el.innerHTML = `
+    <div class="detail-head">
+      <div class="title">
+        <span class="em">${s.emoji}</span>
+        <div>
+          <h2 style="margin:0">${s.name}</h2>
+          <div style="color:var(--muted)">${s.tagline}</div>
+          <div class="pill-row">
+            <span class="pill"><i class="fa-solid fa-bolt"></i> ${s.exams.length} major exams</span>
+            <span class="pill"><i class="fa-solid fa-map-location-dot"></i> ${s.stateCETs.length} state CETs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><i class="fa-solid fa-circle-info"></i> Overview</h3>
+      <p style="margin:0; color:var(--muted)">${s.description}</p>
+    </div>
+
+    <div class="panel">
+      <h3><i class="fa-solid fa-route"></i> Roadmap (11th → Career)</h3>
+      <div class="timeline">
+        ${s.roadmap.map(r=>`
+          <div class="tl-item">
+            <div class="tl-stage">${r.stage}</div>
+            <div class="tl-desc">${r.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><i class="fa-solid fa-clipboard-list"></i> Detailed Exam Hub</h3>
+      ${s.exams.map(ex=>`
+        <div class="exam-card">
+          <h4>${ex.name} <span style="color:var(--muted); font-weight:500; font-size:.9rem">— ${ex.authority}</span></h4>
+          <div class="exam-meta">
+            <span class="meta-chip"><i class="fa-regular fa-clock"></i> ${ex.pattern.duration}</span>
+            <span class="meta-chip"><i class="fa-solid fa-bullseye"></i> ${ex.pattern.totalMarks} marks</span>
+            <span class="meta-chip"><i class="fa-solid fa-list-ol"></i> ${ex.pattern.questions}</span>
+            <span class="meta-chip"><i class="fa-solid fa-scale-balanced"></i> ${ex.pattern.marking}</span>
+          </div>
+          <div class="exam-grid">
+            <div class="exam-block">
+              <h5>Core Syllabus</h5>
+              <ul>${ex.syllabus.map(x=>`<li>${x}</li>`).join('')}</ul>
+            </div>
+            <div class="exam-block">
+              <h5>Recommended Books</h5>
+              <ul>${ex.books.map(x=>`<li>${x}</li>`).join('')}</ul>
+            </div>
+            <div class="exam-block" style="grid-column:1/-1">
+              <h5>Topper Techniques</h5>
+              <ul>${ex.tips.map(x=>`<li>${x}</li>`).join('')}</ul>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="panel">
+      <h3><i class="fa-solid fa-map-location-dot"></i> State CETs & Other Entrance Exams</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Exam</th><th>State / Region</th><th>Subjects</th><th>Marking</th></tr></thead>
+          <tbody>
+            ${s.stateCETs.map(c=>`<tr><td><strong>${c.name}</strong></td><td>${c.state}</td><td>${c.subjects}</td><td>${c.marking}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3><i class="fa-brands fa-youtube" style="color:#ef4444"></i> Motivation & Strategy Video</h3>
+      <div class="video-wrap">
+        <iframe src="${s.motivationVideo}" title="Motivation video for ${s.name}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  `;
+}
+document.getElementById('backToStreams').addEventListener('click', ()=> go('streams'));
+
+/* =========================
+   QUIZ
+========================= */
+let quizState = {idx:0, answers:[]};
+function renderQuiz(){
+  quizState = {idx:0, answers:[]};
+  showQuestion();
+}
+function showQuestion(){
+  const total = mockData.quiz.length;
+  const i = quizState.idx;
+  document.getElementById('quizProgress').style.width = ((i)/total*100)+'%';
+  const card = document.getElementById('quizCard');
+  if(i>=total){ showResult(); return; }
+  const q = mockData.quiz[i];
+  card.innerHTML = `
+    <div class="qnum">QUESTION ${i+1} OF ${total}</div>
+    <div class="qtext">${q.q}</div>
+    <div class="options">
+      ${q.options.map((o,idx)=>`
+        <div class="option" data-idx="${idx}">
+          <span class="dot"></span>
+          <span>${o.text}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="quiz-actions">
+      <button class="btn btn-ghost btn-sm" id="prevQ" ${i===0?'disabled style="opacity:.5; cursor:not-allowed"':''}><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <button class="btn btn-primary btn-sm" id="nextQ" disabled style="opacity:.5; cursor:not-allowed">${i===total-1?'See Result':'Next'} <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  `;
+  let chosen = quizState.answers[i];
+  if(chosen!=null) selectOpt(chosen);
+  card.querySelectorAll('.option').forEach(opt=>{
+    opt.addEventListener('click', ()=> selectOpt(parseInt(opt.dataset.idx)));
+  });
+  card.querySelector('#nextQ').addEventListener('click', ()=>{
+    if(quizState.answers[i]==null) return;
+    quizState.idx++; showQuestion();
+  });
+  card.querySelector('#prevQ').addEventListener('click', ()=>{
+    if(i===0) return;
+    quizState.idx--; showQuestion();
+  });
+
+  function selectOpt(idx){
+    quizState.answers[i] = idx;
+    card.querySelectorAll('.option').forEach((o,k)=> o.classList.toggle('selected', k===idx));
+    const nxt = card.querySelector('#nextQ');
+    nxt.disabled = false; nxt.style.opacity=''; nxt.style.cursor='';
+  }
+}
+function showResult(){
+  document.getElementById('quizProgress').style.width = '100%';
+  const tally = {pcm:0,pcb:0,commerce:0,arts:0};
+  quizState.answers.forEach((a,i)=>{
+    const stream = mockData.quiz[i].options[a].stream;
+    tally[stream] = (tally[stream]||0)+1;
+  });
+  const winner = Object.entries(tally).sort((a,b)=>b[1]-a[1])[0][0];
+  const s = mockData.streams[winner];
+  const card = document.getElementById('quizCard');
+  card.innerHTML = `
+    <div class="result">
+      <div class="em">${s.emoji}</div>
+      <h2>You're built for <span class="stream-name">${s.name}</span></h2>
+      <p style="color:var(--muted); max-width:520px; margin:8px auto 22px">${s.description}</p>
+      <button class="btn btn-primary" id="viewStream"><i class="fa-solid fa-arrow-right"></i> View ${s.name} Details</button>
+      <div style="margin-top:14px">
+        <button class="btn btn-ghost btn-sm" id="retake"><i class="fa-solid fa-rotate-right"></i> Retake Quiz</button>
+      </div>
+    </div>
+  `;
+  card.querySelector('#viewStream').addEventListener('click', ()=> go('detail', {streamId: winner}));
+  card.querySelector('#retake').addEventListener('click', renderQuiz);
+}
+
+/* Init */
+document.getElementById('year').textContent = new Date().getFullYear();
+renderStreamsList();
+</script>
+</body>
 </html>
